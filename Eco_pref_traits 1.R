@@ -665,12 +665,7 @@ summary(RA_ols_amb_gender)
 # Pro-enviro Behavior -----------------------------------------------------
 
 # OLS model
-BEP_ols_model <- lm(CO2_Contribution ~ CO2_Treatment + CO2_Treatment * CO2_Guess + NEP_score +
-                      CO2_Treatment * NEU_norm + CO2_Treatment * EXT_norm + CO2_Treatment * OPN_norm + CO2_Treatment * ARG_norm + CO2_Treatment * CON_norm +
-                      NEU_norm + EXT_norm + OPN_norm + ARG_norm + CON_norm +
-                      Amb_mean + Time_mean + RT_18 + Risk_HL_OLS_mean +
-                      MV_Care + MV_Fairness + MV_Loyalty + MV_Authority + MV_Purity +
-                      Female + Age + Expenses, data = PTC_data)
+BEP_ols_model <- lm(CO2_Contribution ~ CO2_Treatment, data = PTC_data)
 
 summary(BEP_ols_model)
 
@@ -727,3 +722,5 @@ BEP_tobit_model_high <- censReg(CO2_Contribution ~ CO2_Treatment + CO2_Treatment
                                 Female + Age + Expenses, left = 0, data = subset(PTC_data, school == 1))
 
 summary(BEP_tobit_model_high)
+
+save(PTC_data, file="../DATA/PCT_data.RData")
