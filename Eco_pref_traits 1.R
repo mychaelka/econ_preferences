@@ -285,6 +285,12 @@ PTC_data <- PTC_data %>%
         MV_Purity = rowSums(select(., Moral1_5, Moral1_11, Moral2_5, Moral2_11), na.rm = TRUE)
     )
 
+# NEP score: higher score = less pro-environmental
+PTC_data <- PTC_data %>% 
+  mutate(
+    NEP_score = rowSums(select(., NEP_1, NEP_2, NEP_3, NEP_4, NEP_5, NEP_6, NEP_7, NEP_8, NEP_9, NEP_10, NEP_11, NEP_12, NEP_13, NEP_14, NEP_15), na.rm = TRUE)
+  )
+
 #Care: an ability to feel (and dislike) the pain of others. It underlies the virtues of kindness, gentleness, and nurturance.
 #Fairness: reciprocal altruism. It underlies the virtues of justice and rights.
 #Loyalty: to form shifting coalitions. It’s “one for all and all for one.” It underlies the virtues of patriotism and self-sacrifice for the group.
@@ -659,19 +665,21 @@ summary(RA_ols_amb_gender)
 # Pro-enviro Behavior -----------------------------------------------------
 
 # OLS model
-BEP_ols_model <- lm(CO2_Contribution ~ CO2_Treatment + CO2_Treatment * CO2_Guess +
-                    NEU_norm + EXT_norm + OPN_norm + ARG_norm + CON_norm +
-                    Amb_mean + Effort_mean + Time_mean + RT_18 + Risk_HL_OLS_mean +
-                    MV_Care + MV_Fairness + MV_Loyalty + MV_Authority + MV_Purity +
-                    Female + Age + Expenses, data = PTC_data)
+BEP_ols_model <- lm(CO2_Contribution ~ CO2_Treatment + CO2_Treatment * CO2_Guess + NEP_score +
+                      CO2_Treatment * NEU_norm + CO2_Treatment * EXT_norm + CO2_Treatment * OPN_norm + CO2_Treatment * ARG_norm + CO2_Treatment * CON_norm +
+                      NEU_norm + EXT_norm + OPN_norm + ARG_norm + CON_norm +
+                      Amb_mean + Time_mean + RT_18 + Risk_HL_OLS_mean +
+                      MV_Care + MV_Fairness + MV_Loyalty + MV_Authority + MV_Purity +
+                      Female + Age + Expenses, data = PTC_data)
 
 summary(BEP_ols_model)
 
 
 # University Students
-BEP_model_uni <- lm(CO2_Contribution ~ CO2_Treatment + CO2_Treatment * CO2_Guess +
+BEP_model_uni <- lm(CO2_Contribution ~ CO2_Treatment + CO2_Treatment * CO2_Guess + NEP_score +
+                         CO2_Treatment * NEU_norm + CO2_Treatment * EXT_norm + CO2_Treatment * OPN_norm + CO2_Treatment * ARG_norm + CO2_Treatment * CON_norm +
                          NEU_norm + EXT_norm + OPN_norm + ARG_norm + CON_norm +
-                         Amb_mean + Effort_mean + Time_mean + RT_18 + Risk_HL_OLS_mean +
+                         Amb_mean + Time_mean + RT_18 + Risk_HL_OLS_mean +
                          MV_Care + MV_Fairness + MV_Loyalty + MV_Authority + MV_Purity +
                          Female + Age + Expenses,
                      data = subset(PTC_data, school == 0))
@@ -679,39 +687,43 @@ BEP_model_uni <- lm(CO2_Contribution ~ CO2_Treatment + CO2_Treatment * CO2_Guess
 summary(BEP_model_uni)
 
 # High School Students
-BEP_model_high <- lm(CO2_Contribution ~ CO2_Treatment + CO2_Treatment * CO2_Guess +
-                           NEU_norm + EXT_norm + OPN_norm + ARG_norm + CON_norm +
-                           Amb_mean + Effort_mean + Time_mean + RT_18 + Risk_HL_OLS_mean +
-                           MV_Care + MV_Fairness + MV_Loyalty + MV_Authority + MV_Purity +
-                           Female + Age + Expenses,
+BEP_model_high <- lm(CO2_Contribution ~ CO2_Treatment + CO2_Treatment * CO2_Guess + NEP_score +
+                       CO2_Treatment * NEU_norm + CO2_Treatment * EXT_norm + CO2_Treatment * OPN_norm + CO2_Treatment * ARG_norm + CO2_Treatment * CON_norm +
+                       NEU_norm + EXT_norm + OPN_norm + ARG_norm + CON_norm +
+                       Amb_mean + Time_mean + RT_18 + Risk_HL_OLS_mean +
+                       MV_Care + MV_Fairness + MV_Loyalty + MV_Authority + MV_Purity +
+                       Female + Age + Expenses,
                        data = subset(PTC_data, school == 1))
 
 summary(BEP_model_high)
 
 
 # Tobit model
-BEP_tobit_model <- censReg(CO2_Contribution ~ CO2_Treatment + CO2_Treatment * CO2_Guess +
+BEP_tobit_model <- censReg(CO2_Contribution ~ CO2_Treatment + CO2_Treatment * CO2_Guess + NEP_score +
+                           CO2_Treatment * NEU_norm + CO2_Treatment * EXT_norm + CO2_Treatment * OPN_norm + CO2_Treatment * ARG_norm + CO2_Treatment * CON_norm +
                            NEU_norm + EXT_norm + OPN_norm + ARG_norm + CON_norm +
-                           Amb_mean + Effort_mean + Time_mean + RT_18 + Risk_HL_OLS_mean +
+                           Amb_mean + Time_mean + RT_18 + Risk_HL_OLS_mean +
                            MV_Care + MV_Fairness + MV_Loyalty + MV_Authority + MV_Purity +
                            Female + Age + Expenses, left = 0, data = PTC_data)
 
 summary(BEP_tobit_model)
 
 # University Students
-BEP_tobit_model_uni <- censReg(CO2_Contribution ~ CO2_Treatment + CO2_Treatment * CO2_Guess +
+BEP_tobit_model_uni <- censReg(CO2_Contribution ~ CO2_Treatment + CO2_Treatment * CO2_Guess + NEP_score +
+                               CO2_Treatment * NEU_norm + CO2_Treatment * EXT_norm + CO2_Treatment * OPN_norm + CO2_Treatment * ARG_norm + CO2_Treatment * CON_norm +
                                NEU_norm + EXT_norm + OPN_norm + ARG_norm + CON_norm +
-                               Amb_mean + Effort_mean + Time_mean + RT_18 + Risk_HL_OLS_mean +
+                               Amb_mean + Time_mean + RT_18 + Risk_HL_OLS_mean +
                                MV_Care + MV_Fairness + MV_Loyalty + MV_Authority + MV_Purity +
                                Female + Age + Expenses, left = 0, data = subset(PTC_data, school == 0))
 
 summary(BEP_tobit_model_uni)
 
 # High School Students
-BEP_tobit_model_high <- censReg(CO2_Contribution ~ CO2_Treatment + CO2_Treatment * CO2_Guess +
-                                   NEU_norm + EXT_norm + OPN_norm + ARG_norm + CON_norm +
-                                   Amb_mean + Effort_mean + Time_mean + RT_18 + Risk_HL_OLS_mean +
-                                   MV_Care + MV_Fairness + MV_Loyalty + MV_Authority + MV_Purity +
-                                   Female + Age + Expenses, left = 0, data = subset(PTC_data, school == 1))
+BEP_tobit_model_high <- censReg(CO2_Contribution ~ CO2_Treatment + CO2_Treatment * CO2_Guess + NEP_score +
+                                CO2_Treatment * NEU_norm + CO2_Treatment * EXT_norm + CO2_Treatment * OPN_norm + CO2_Treatment * ARG_norm + CO2_Treatment * CON_norm +
+                                NEU_norm + EXT_norm + OPN_norm + ARG_norm + CON_norm +
+                                Amb_mean + Time_mean + RT_18 + Risk_HL_OLS_mean +
+                                MV_Care + MV_Fairness + MV_Loyalty + MV_Authority + MV_Purity +
+                                Female + Age + Expenses, left = 0, data = subset(PTC_data, school == 1))
 
 summary(BEP_tobit_model_high)
